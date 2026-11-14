@@ -35,9 +35,6 @@ npm test
 1. 在 Vercel 导入本 GitHub 仓库 (`wch930/pool-schedule-check`)。
 2. Framework Preset 保持默认 (`Other`)，仓库内置的 `vercel.json` 与 `api/pools.js` 会自动生效，直接点击 **Deploy** 即可。
 
-### 方式二：部署到 Cloudflare Pages
-1. 在 Cloudflare Dashboard -> **Workers & Pages** -> **Create** -> **Pages** 连接本 GitHub 仓库。
-2. Build settings 中：
-   - **Build command**：留空
-   - **Build output directory**：填写 `public`
-3. 点击 **Save and Deploy**，仓库根目录下的 `functions/api/pools.js` 会自动部署为 `/api/pools` 边缘函数。
+### 方式二：部署到 Cloudflare Workers / Pages
+1. **Cloudflare Workers (Workers Builds 自动部署)**：直接连接本仓库即可，内置的 `wrangler.toml` 与 `worker.js` 会自动托管 `public/` 静态资源并将 `/api/pools` 路由至边缘函数。
+2. **Cloudflare Pages**：Build command 留空，Build output directory 填 `public`，根目录下的 `functions/api/pools.js` 会自动生效。
