@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Downtown Toronto Lane Swim · 多伦多市中心三馆泳道实时排期</title>
+    <meta
+      name="description"
+      content="实时追踪多伦多市中心三大游泳馆（Wellesley Community Centre、Pam McConnell Aquatic Centre、St. Lawrence Community Recreation Centre）的 Lane Swim 开放状态、今日时间轴与未来四周排期。"
+    />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Header -->
+      <header class="site-header">
+        <div class="brand-group">
+          <img
+            src="./favicon.svg"
+            alt="Downtown Toronto Lane Swim 图标"
+            class="brand-mark"
+            width="44"
+            height="44"
+          />
+          <div class="brand-titles">
+            <h1>Downtown Toronto Lane Swim</h1>
+            <p class="brand-subtitle">
+              多伦多市中心三馆泳道追踪 · Wellesley · Pam McConnell · St. Lawrence
+            </p>
+          </div>
+        </div>
+
+        <div class="header-meta">
+          <div class="toronto-clock" id="toronto-clock-pill" aria-live="polite">
+            <span class="clock-dot" id="clock-mode-dot"></span>
+            <span id="toronto-clock-text" class="tabular">多伦多时间加载中...</span>
+          </div>
+          <button
+            type="button"
+            id="btn-refresh-data"
+            class="btn-refresh"
+            title="从多伦多市政府官网实时拉取最新排期与闭馆通知"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+              <path d="M16 16h5v5" />
+            </svg>
+            <span id="refresh-btn-label">同步官网</span>
+          </button>
+        </div>
+      </header>
+
+      <main id="main-content">
+        <!-- Error Banner (hidden unless fetch fails) -->
+        <div id="error-banner" class="error-banner" hidden>
+          <span id="error-message">无法连接多伦多市政府排期服务，请稍后重试。</span>
+          <button type="button" id="btn-retry-fetch" class="btn-refresh">重试</button>
+        </div>
+
+        <!-- Instant Verdict Strip -->
+        <section
+          id="live-verdict-banner"
+          class="verdict-banner"
+          aria-label="当前泳道开放概览"
+        >
+          <div class="verdict-main">
+            <span class="verdict-indicator" aria-hidden="true"></span>
+            <div class="verdict-copy">
+              <h2 id="verdict-headline">正在读取多伦多市政府实时泳池排期...</h2>
+              <p id="verdict-subtext" class="verdict-sub">
+                正在同步 Wellesley、Pam McConnell 与 St. Lawrence 最新开放状态与设施通知
+              </p>
+            </div>
+          </div>
+          <div id="verdict-chips" class="verdict-chips"></div>
+        </section>
+
+        <!-- Unified Controls Panel -->
+        <section class="controls-panel" aria-label="日期、时间与泳道筛选">
+          <div class="controls-row">
+            <div class="date-nav-group">
+              <div class="week-select-wrap">
+                <label for="select-week" class=" control-label" hidden>选择周次</label>
+                <select id="select-week" class="week-select" aria-label="选择官方排期周次">
+                  <option value="0">加载周次...</option>
+                </select>
+              </div>
+              <nav id="day-selector-strip" class="day-strip" aria-label="选择星期"></nav>
+            </div>
+
+            <div class="time-query-group" role="group" aria-label="查询时间点">
+              <span class="control-label">查询时刻</span>
+              <button
+                type="button"
+                id="btn-time-live"
+                class="time-preset-btn is-active"
+                data-preset="live"
+              >
+                实时现在
+              </button>
+              <button
+                type="button"
+                id="btn-time-morning"
+                class="time-preset-btn"
+                data-minutes="450"
+              >
+                晨泳 07:30
+              </button>
+              <button
+                type="button"
+                id="btn-time-noon"
+                class="time-preset-btn"
+                data-minutes="720"
+              >
+                午间 12:00
+              </button>
+              <button
+                type="button"
+                id="btn-time-evening"
+                class="time-preset-btn"
+                data-minutes="1080"
+              >
+                下班 18:00
+              </button>
+              <input
+                type="time"
+                id="input-custom-time"
+                class="custom-time-input"
+                step="900"
+                aria-label="自定义查询时间"
+                title="自由指定时间查看哪个泳馆开放"
+              />
+            </div>
+          </div>
+
+          <hr class="controls-divider" />
+
+          <div class="controls-row">
+            <div class="filter-group" id="filter-pills-group" role="radiogroup" aria-label="场次类型筛选">
+              <span class="control-label">计入开放</span>
+              <button
+                type="button"
+                id="filter-my_lane"
+                class="filter-pill is-active"
+                data-filter="my_lane"
+              >
+                我的可游 (通用 + Men)
+              </button>
+              <button
+                type="button"
+                id="filter-general_only"
+                class="filter-pill"
+                data-filter="general_only"
+              >
+                仅通用 Lane Swim
+              </button>
+              <button
+                type="button"
+                id="filter-all_lane"
+                class="filter-pill"
+                data-filter="all_lane"
+              >
+                全部泳道 (含 Women / 60+)
+              </button>
+              <button
+                type="button"
+                id="filter-all_swim"
+                class="filter-pill"
+                data-filter="all_swim"
+              >
+                全部项目 (含 Leisure / 水中健身)
+              </button>
+            </div>
+
+            <div class="legend-inline" aria-hidden="true">
+              <span class="legend-item">
+                <span class="legend-swatch swatch-general"></span>Lane Swim
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch swatch-men"></span>Men 男士
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch swatch-women"></span>Women 女士
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch swatch-senior"></span>60+ 长者
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 1: Unified 3-Pool Visual Timeline -->
+        <section class="section-block" id="timeline-section" aria-labelledby="heading-timeline">
+          <div class="section-header">
+            <h2 class="section-title" id="heading-timeline">
+              三馆单日泳道时间轴对比
+            </h2>
+            <span class="section-hint" id="timeline-date-hint">
+              06:00 – 22:00 · 点击时间轴任意位置可快速预览该时刻开放情况
+            </span>
+          </div>
+
+          <div class="timeline-card" id="timeline-container">
+            <div class="skeleton-box" style="height: 176px"></div>
+          </div>
+        </section>
+
+        <!-- Section 2: Three-Pool Status & Day Schedule Cards -->
+        <section class="section-block" id="pools-section" aria-labelledby="heading-pools">
+          <div class="section-header">
+            <h2 class="section-title" id="heading-pools">三馆详情与当日场次</h2>
+            <span class="section-hint" id="sync-status-text">数据源：City of Toronto Live API</span>
+          </div>
+
+          <div class="pools-grid" id="pool-cards-grid">
+            <div class="skeleton-box" style="height: 360px"></div>
+            <div class="skeleton-box" style="height: 360px"></div>
+            <div class="skeleton-box" style="height: 360px"></div>
+          </div>
+        </section>
+
+        <!-- Section 3: Full 7-Day Weekly Comparison -->
+        <section class="section-block" id="weekly-section" aria-labelledby="heading-weekly">
+          <div class="section-header">
+            <h2 class="section-title" id="heading-weekly">整周排期总览 (周一至周日)</h2>
+            <span class="section-hint" id="weekly-range-hint">支持切换查看官网已发布的未来 4 周排期</span>
+          </div>
+
+          <div class="weekly-card">
+            <div class="weekly-toolbar">
+              <div class="pool-tabs" id="weekly-pool-tabs" role="tablist" aria-label="周表场馆切换">
+                <button
+                  type="button"
+                  id="wtab-all"
+                  class="pool-tab-btn is-active"
+                  data-pool="all"
+                >
+                  三馆对比
+                </button>
+                <button
+                  type="button"
+                  id="wtab-451"
+                  class="pool-tab-btn"
+                  data-pool="451"
+                >
+                  Wellesley
+                </button>
+                <button
+                  type="button"
+                  id="wtab-2012"
+                  class="pool-tab-btn"
+                  data-pool="2012"
+                >
+                  Pam McConnell
+                </button>
+                <button
+                  type="button"
+                  id="wtab-272"
+                  class="pool-tab-btn"
+                  data-pool="272"
+                >
+                  St. Lawrence
+                </button>
+              </div>
+              <span class="section-hint" id="weekly-filter-note">当前仅展示所选筛选条件下的场次</span>
+            </div>
+
+            <div class="weekly-table-scroll" id="weekly-table-container">
+              <div class="skeleton-box" style="height: 220px; margin: 16px"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div>
+          数据实时同步自
+          <a
+            href="https://www.toronto.ca/explore-enjoy/parks-recreation/places-spaces/parks-and-recreation-facilities/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            City of Toronto Parks &amp; Recreation
+          </a>
+          · 所有时间均为多伦多当地时间 (America/Toronto)
+        </div>
+        <div>
+          出行前建议留意场馆临时通知 · Wellesley 与 Pam McConnell 为免费社区中心 (Free Centre)
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>

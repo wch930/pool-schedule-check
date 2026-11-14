@@ -1,0 +1,1476 @@
+/* ==========================================================================
+   Downtown Toronto Lane Swim Tracker — Core Design System (Vanilla CSS)
+   Aesthetic: Architectural Natatorium — sunlit lap water, limestone deck,
+   high-legibility Swiss timetable typography.
+   ========================================================================== */
+
+:root {
+  /* Surfaces & Canvas */
+  --bg-canvas: hsl(204, 32%, 96.8%);
+  --bg-skylight: hsl(198, 68%, 93.5%);
+  --surface-card: hsl(0, 0%, 100%);
+  --surface-elevated: hsl(204, 33%, 98.6%);
+  --surface-subtle: hsl(205, 25%, 94%);
+  --surface-inset: hsl(206, 24%, 91.2%);
+
+  /* Borders & Hairlines */
+  --hairline: hsl(208, 24%, 87.5%);
+  --hairline-strong: hsl(208, 22%, 79%);
+
+  /* Ink & Typography */
+  --ink-primary: hsl(212, 45%, 12%);
+  --ink-secondary: hsl(212, 22%, 34%);
+  --ink-muted: hsl(212, 15%, 50%);
+  --ink-on-accent: hsl(0, 0%, 100%);
+
+  /* Brand & Aquatic Accents */
+  --aquatic-primary: hsl(200, 84%, 34%);
+  --aquatic-primary-hover: hsl(200, 88%, 28%);
+  --aquatic-soft: hsl(199, 76%, 93.5%);
+  --aquatic-lane-general: hsl(201, 83%, 39%);
+  --aquatic-lane-men: hsl(181, 76%, 31%);
+  --aquatic-lane-women: hsl(15, 72%, 50%);
+  --aquatic-lane-senior: hsl(37, 80%, 42%);
+  --aquatic-other: hsl(208, 18%, 66%);
+
+  /* Status Semantics */
+  --status-open: hsl(158, 76%, 29%);
+  --status-open-vivid: hsl(156, 72%, 37%);
+  --status-open-bg: hsl(155, 60%, 93.5%);
+  --status-open-subtle: hsl(155, 48%, 87%);
+
+  --status-soon: hsl(33, 88%, 35%);
+  --status-soon-bg: hsl(39, 90%, 93.5%);
+  --status-soon-subtle: hsl(38, 76%, 84%);
+
+  --status-closed: hsl(212, 18%, 42%);
+  --status-closed-bg: hsl(210, 22%, 93.5%);
+
+  --status-closure: hsl(4, 72%, 45%);
+  --status-closure-bg: hsl(4, 80%, 95.5%);
+
+  --status-notice: hsl(32, 82%, 34%);
+  --status-notice-bg: hsl(42, 88%, 95%);
+
+  /* Shadows & Depth */
+  --shadow-sm:
+    0 1px 2px hsla(212, 40%, 12%, 0.04),
+    0 2px 6px hsla(212, 40%, 12%, 0.03);
+  --shadow-card:
+    0 1px 2px hsla(212, 42%, 12%, 0.05),
+    0 8px 24px -6px hsla(206, 45%, 16%, 0.07);
+  --shadow-card-open:
+    0 2px 6px hsla(158, 60%, 20%, 0.08),
+    0 12px 28px -6px hsla(158, 55%, 18%, 0.12);
+  --shadow-popover:
+    0 4px 12px hsla(212, 40%, 12%, 0.08),
+    0 16px 36px -8px hsla(212, 40%, 12%, 0.14);
+
+  /* Radii & Spacing */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Reset & Base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--ink-primary);
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(
+    ellipse 90% 420px at 50% -80px,
+    var(--bg-skylight) 0%,
+    transparent 72%
+  );
+  line-height: 1.5;
+}
+
+a {
+  color: var(--aquatic-primary);
+  text-decoration: none;
+  transition: color 0.16s ease;
+}
+
+a:hover {
+  color: var(--aquatic-primary-hover);
+  text-decoration: underline;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Layout Container */
+.app-shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+/* ==========================================================================
+   Top Header
+   ========================================================================== */
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-titles h1 {
+  margin: 0;
+  font-size: clamp(1.32rem, 2.4vw, 1.72rem);
+  font-weight: 800;
+  letter-spacing: -0.028em;
+  line-height: 1.18;
+  color: var(--ink-primary);
+}
+
+.brand-subtitle {
+  margin: 3px 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-secondary);
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.toronto-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  font-size: 0.82rem;
+  color: var(--ink-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.clock-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-open-vivid);
+}
+
+.clock-dot.is-custom-time {
+  background: var(--aquatic-primary);
+}
+
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--hairline);
+  background: var(--surface-card);
+  color: var(--ink-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.14s ease;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: var(--surface-elevated);
+  border-color: var(--hairline-strong);
+}
+
+.btn-refresh:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.btn-refresh svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.btn-refresh.is-spinning svg {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Instant Verdict Strip
+   ========================================================================== */
+.verdict-banner {
+  margin-top: 18px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.verdict-banner.state-open {
+  background: linear-gradient(135deg, hsl(156, 60%, 95.5%) 0%, hsl(0, 0%, 100%) 68%);
+  border-color: var(--status-open-subtle);
+}
+
+.verdict-banner.state-soon {
+  background: linear-gradient(135deg, hsl(40, 88%, 95.5%) 0%, hsl(0, 0%, 100%) 68%);
+  border-color: var(--status-soon-subtle);
+}
+
+.verdict-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.verdict-indicator {
+  margin-top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--status-closed);
+}
+
+.state-open .verdict-indicator {
+  background: var(--status-open-vivid);
+  box-shadow: 0 0 0 4px hsla(156, 72%, 37%, 0.18);
+}
+
+.state-soon .verdict-indicator {
+  background: var(--status-soon);
+  box-shadow: 0 0 0 4px hsla(33, 88%, 35%, 0.16);
+}
+
+.verdict-copy h2 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink-primary);
+}
+
+.verdict-sub {
+  margin: 3px 0 0;
+  font-size: 0.86rem;
+  color: var(--ink-secondary);
+}
+
+.verdict-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.verdict-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  color: var(--ink-primary);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.verdict-chip:hover {
+  transform: translateY(-1px);
+  border-color: var(--aquatic-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.verdict-chip.chip-open {
+  background: var(--status-open-bg);
+  border-color: var(--status-open-subtle);
+  color: var(--status-open);
+}
+
+.verdict-chip.chip-soon {
+  background: var(--status-soon-bg);
+  border-color: var(--status-soon-subtle);
+  color: var(--status-soon);
+}
+
+/* ==========================================================================
+   Controls Panel (Date, Time Query, Swim Type Filter)
+   ========================================================================== */
+.controls-panel {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.controls-divider {
+  height: 1px;
+  background: var(--surface-subtle);
+  margin: 0;
+}
+
+/* Week & Day Selector */
+.date-nav-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.week-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.week-select {
+  appearance: none;
+  padding: 6px 28px 6px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  background-color: var(--surface-subtle);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  color: var(--ink-primary);
+  font-size: 0.81rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.day-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.day-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease,
+    border-color 0.14s ease;
+}
+
+.day-btn:hover {
+  background: var(--surface-subtle);
+  color: var(--ink-primary);
+}
+
+.day-btn.is-active {
+  background: var(--ink-primary);
+  color: var(--ink-on-accent);
+}
+
+.day-btn .day-date {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  opacity: 0.78;
+}
+
+.day-btn.is-today:not(.is-active) {
+  border-color: var(--hairline-strong);
+  background: var(--surface-elevated);
+  color: var(--ink-primary);
+}
+
+/* Time Query Controls */
+.time-query-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  margin-right: 2px;
+}
+
+.time-preset-btn {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--hairline);
+  background: var(--surface-card);
+  color: var(--ink-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.time-preset-btn:hover {
+  border-color: var(--hairline-strong);
+  color: var(--ink-primary);
+}
+
+.time-preset-btn.is-active {
+  background: var(--aquatic-primary);
+  border-color: var(--aquatic-primary);
+  color: var(--ink-on-accent);
+}
+
+.custom-time-input {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  background: var(--surface-subtle);
+  color: var(--ink-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.custom-time-input.is-active {
+  border-color: var(--aquatic-primary);
+  background: var(--aquatic-soft);
+  color: var(--aquatic-primary-hover);
+}
+
+/* Filter Pills */
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--hairline);
+  background: var(--surface-card);
+  color: var(--ink-secondary);
+  font-size: 0.81rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-pill:hover {
+  background: var(--surface-subtle);
+  color: var(--ink-primary);
+}
+
+.filter-pill.is-active {
+  background: var(--aquatic-soft);
+  border-color: var(--aquatic-primary);
+  color: var(--aquatic-primary-hover);
+}
+
+.legend-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.76rem;
+  color: var(--ink-secondary);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.swatch-general {
+  background: var(--aquatic-lane-general);
+}
+.swatch-men {
+  background: var(--aquatic-lane-men);
+}
+.swatch-women {
+  background: var(--aquatic-lane-women);
+}
+.swatch-senior {
+  background: var(--aquatic-lane-senior);
+}
+.swatch-other {
+  background: var(--aquatic-other);
+}
+
+/* ==========================================================================
+   Section Headings
+   ========================================================================== */
+.section-block {
+  margin-top: 26px;
+}
+
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink-primary);
+}
+
+.section-hint {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+/* ==========================================================================
+   Unified 3-Pool Swim-Lane Day Timeline
+   ========================================================================== */
+.timeline-card {
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 16px 18px 14px;
+  overflow: hidden;
+}
+
+.timeline-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timeline-axis-row,
+.timeline-lane-row {
+  display: grid;
+  grid-template-columns: 148px 1fr;
+  align-items: center;
+  gap: 14px;
+}
+
+.timeline-axis-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.timeline-axis-track {
+  position: relative;
+  height: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.axis-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.axis-tick:first-child {
+  transform: translateX(0);
+}
+
+.axis-tick:last-child {
+  transform: translateX(-100%);
+}
+
+.lane-pool-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lane-pool-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lane-pool-sub {
+  font-size: 0.73rem;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lane-track {
+  position: relative;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-subtle);
+  border: 1px solid hsla(208, 24%, 84%, 0.65);
+  cursor: crosshair;
+  overflow: visible;
+}
+
+.lane-hour-guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: hsla(208, 22%, 82%, 0.55);
+  pointer-events: none;
+}
+
+.lane-block {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 6px;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  box-shadow: 0 1px 3px hsla(212, 45%, 12%, 0.16);
+  transition:
+    transform 0.14s ease,
+    filter 0.14s ease,
+    opacity 0.14s ease;
+  z-index: 2;
+}
+
+.lane-block:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.07);
+  z-index: 5;
+}
+
+.lane-block.cat-lane_general {
+  background: var(--aquatic-lane-general);
+}
+.lane-block.cat-lane_men {
+  background: var(--aquatic-lane-men);
+}
+.lane-block.cat-lane_women {
+  background: var(--aquatic-lane-women);
+}
+.lane-block.cat-lane_senior {
+  background: var(--aquatic-lane-senior);
+}
+.lane-block.cat-leisure,
+.lane-block.cat-aquafit,
+.lane-block.cat-lessons {
+  background: var(--aquatic-other);
+}
+
+.lane-block.is-dimmed {
+  opacity: 0.24;
+  filter: grayscale(0.35);
+}
+
+.lane-block.is-cancelled {
+  opacity: 0.35;
+  text-decoration: line-through;
+  background: var(--status-closure);
+}
+
+.lane-block.is-active-now {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px var(--status-open-vivid);
+  z-index: 4;
+}
+
+.timeline-now-marker {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  background: var(--status-closure);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.timeline-now-marker.is-query {
+  background: var(--ink-primary);
+}
+
+.timeline-now-badge {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--status-closure);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.timeline-now-marker.is-query .timeline-now-badge {
+  background: var(--ink-primary);
+}
+
+.timeline-tooltip {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-elevated);
+  border: 1px solid var(--hairline);
+  font-size: 0.8rem;
+  color: var(--ink-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Three-Pool Cards Grid
+   ========================================================================== */
+.pools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.pool-card {
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.pool-card.is-open {
+  border-color: hsl(156, 52%, 68%);
+  box-shadow: var(--shadow-card-open);
+}
+
+.pool-card.is-soon {
+  border-color: hsl(37, 72%, 72%);
+}
+
+/* Card Top Header */
+.pool-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pool-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.status-badge .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.status-badge.badge-open {
+  background: var(--status-open-bg);
+  color: var(--status-open);
+}
+.status-badge.badge-open .dot {
+  background: var(--status-open-vivid);
+}
+
+.status-badge.badge-soon {
+  background: var(--status-soon-bg);
+  color: var(--status-soon);
+}
+.status-badge.badge-soon .dot {
+  background: var(--status-soon);
+}
+
+.status-badge.badge-closed {
+  background: var(--status-closed-bg);
+  color: var(--status-closed);
+}
+.status-badge.badge-closed .dot {
+  background: var(--status-closed);
+}
+
+.admission-tag {
+  font-size: 0.73rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-subtle);
+  color: var(--ink-secondary);
+}
+
+.admission-tag.is-free {
+  background: hsl(196, 65%, 93.5%);
+  color: hsl(199, 82%, 29%);
+}
+
+.pool-name {
+  margin: 2px 0 0;
+  font-size: 1.16rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--ink-primary);
+}
+
+.pool-address-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.81rem;
+  color: var(--ink-secondary);
+}
+
+.pool-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pool-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.spec-chip {
+  font-size: 0.72rem;
+  color: var(--ink-secondary);
+  background: var(--surface-elevated);
+  border: 1px solid var(--hairline);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+
+/* Active / Next Callout Box inside Pool Card */
+.pool-callout {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-elevated);
+  border: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pool-callout.callout-open {
+  background: var(--status-open-bg);
+  border-color: var(--status-open-subtle);
+}
+
+.pool-callout.callout-soon {
+  background: var(--status-soon-bg);
+  border-color: var(--status-soon-subtle);
+}
+
+.callout-headline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.callout-open .callout-headline {
+  color: var(--status-open);
+}
+
+.callout-soon .callout-headline {
+  color: var(--status-soon);
+}
+
+.callout-detail {
+  font-size: 0.8rem;
+  color: var(--ink-secondary);
+}
+
+.progress-track {
+  margin-top: 2px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: hsla(158, 45%, 35%, 0.16);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--status-open-vivid);
+  transition: width 0.3s ease;
+}
+
+/* Facility Alerts inside Card */
+.pool-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alert-item {
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  line-height: 1.42;
+}
+
+.alert-item.severity-closure {
+  background: var(--status-closure-bg);
+  color: var(--status-closure);
+  border: 1px solid hsla(4, 72%, 45%, 0.25);
+}
+
+.alert-item.severity-warning,
+.alert-item.severity-info {
+  background: var(--status-notice-bg);
+  color: var(--status-notice);
+  border: 1px solid hsla(32, 82%, 38%, 0.22);
+}
+
+.alert-title {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* Day Sessions List inside Pool Card */
+.sessions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.sessions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.77rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--surface-subtle);
+}
+
+.session-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-elevated);
+  border: 1px solid transparent;
+  transition:
+    background-color 0.14s ease,
+    border-color 0.14s ease;
+}
+
+.session-row.is-current {
+  background: var(--status-open-bg);
+  border-color: var(--status-open-subtle);
+}
+
+.session-row.is-next {
+  border-color: var(--hairline-strong);
+  background: var(--surface-card);
+}
+
+.session-row.is-past {
+  opacity: 0.52;
+}
+
+.session-row.is-ineligible {
+  opacity: 0.58;
+  background: transparent;
+  border: 1px dashed var(--hairline);
+}
+
+.session-row.is-cancelled {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.session-time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.session-time {
+  font-family: var(--font-mono);
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.session-duration {
+  font-size: 0.71rem;
+  color: var(--ink-muted);
+}
+
+.session-info-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  text-align: right;
+}
+
+.session-prog-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.cat-tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  font-size: 0.69rem;
+  font-weight: 700;
+}
+
+.cat-tag.tag-lane_general {
+  background: hsl(201, 78%, 92%);
+  color: hsl(201, 86%, 28%);
+}
+.cat-tag.tag-lane_men {
+  background: hsl(181, 66%, 91%);
+  color: hsl(181, 82%, 24%);
+}
+.cat-tag.tag-lane_women {
+  background: hsl(15, 82%, 93%);
+  color: hsl(15, 75%, 36%);
+}
+.cat-tag.tag-lane_senior {
+  background: hsl(38, 86%, 91%);
+  color: hsl(36, 84%, 31%);
+}
+.cat-tag.tag-other {
+  background: var(--surface-subtle);
+  color: var(--ink-secondary);
+}
+
+.empty-sessions {
+  padding: 18px 12px;
+  text-align: center;
+  font-size: 0.83rem;
+  color: var(--ink-muted);
+  background: var(--surface-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.hidden-sessions-toggle {
+  margin-top: 2px;
+  padding: 6px 10px;
+  width: 100%;
+  border-radius: var(--radius-xs);
+  border: 1px dashed var(--hairline-strong);
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hidden-sessions-toggle:hover {
+  background: var(--surface-subtle);
+  color: var(--ink-primary);
+}
+
+/* ==========================================================================
+   Weekly 7-Day Schedule Comparison Matrix
+   ========================================================================== */
+.weekly-card {
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.weekly-toolbar {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--hairline);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--surface-elevated);
+}
+
+.pool-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pool-tab-btn {
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--hairline);
+  background: var(--surface-card);
+  color: var(--ink-secondary);
+  font-size: 0.79rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.pool-tab-btn.is-active {
+  background: var(--ink-primary);
+  border-color: var(--ink-primary);
+  color: #fff;
+}
+
+.weekly-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.weekly-table {
+  width: 100%;
+  min-width: 820px;
+  border-collapse: collapse;
+  font-size: 0.79rem;
+}
+
+.weekly-table th,
+.weekly-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--surface-subtle);
+  border-right: 1px solid var(--surface-subtle);
+  vertical-align: top;
+  text-align: left;
+}
+
+.weekly-table th:last-child,
+.weekly-table td:last-child {
+  border-right: none;
+}
+
+.weekly-table thead th {
+  background: var(--surface-subtle);
+  font-weight: 700;
+  color: var(--ink-secondary);
+  font-size: 0.78rem;
+}
+
+.weekly-table thead th.is-selected-day {
+  background: var(--aquatic-soft);
+  color: var(--aquatic-primary-hover);
+}
+
+.weekly-table tbody th {
+  width: 140px;
+  font-weight: 700;
+  color: var(--ink-primary);
+  background: var(--surface-elevated);
+}
+
+.weekly-table td.is-selected-day {
+  background: hsla(199, 76%, 95%, 0.45);
+}
+
+.wk-slot {
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--hairline);
+  margin-bottom: 5px;
+}
+
+.wk-slot:last-child {
+  margin-bottom: 0;
+}
+
+.wk-slot.slot-men {
+  background: hsl(181, 60%, 94%);
+  border-color: hsl(181, 48%, 80%);
+}
+
+.wk-slot.slot-restricted {
+  opacity: 0.68;
+  border-style: dashed;
+}
+
+.wk-slot-time {
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+  display: block;
+}
+
+.wk-slot-label {
+  font-size: 0.69rem;
+  color: var(--ink-secondary);
+}
+
+/* ==========================================================================
+   Loading Skeleton & Error Banner
+   ========================================================================== */
+.skeleton-box {
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--surface-subtle) 25%,
+    var(--surface-elevated) 50%,
+    var(--surface-subtle) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.error-banner {
+  margin-top: 18px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  background: var(--status-closure-bg);
+  border: 1px solid hsla(4, 72%, 45%, 0.3);
+  color: var(--status-closure);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Footer */
+.site-footer {
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .pools-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 16px 14px 48px;
+  }
+
+  .timeline-axis-row,
+  .timeline-lane-row {
+    grid-template-columns: 96px 1fr;
+    gap: 8px;
+  }
+
+  .lane-pool-sub {
+    display: none;
+  }
+
+  .axis-tick {
+    font-size: 0.64rem;
+  }
+
+  .axis-tick.hide-mobile {
+    display: none;
+  }
+
+  .lane-block {
+    font-size: 0;
+    padding: 0;
+  }
+
+  .day-strip {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .day-btn {
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    padding: 6px 2px;
+    font-size: 0.74rem;
+    text-align: center;
+  }
+
+  .day-btn .day-date {
+    font-size: 0.66rem;
+  }
+}
